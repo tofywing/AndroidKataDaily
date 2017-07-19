@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -74,23 +75,18 @@ public class MoviesListAdapter extends RecyclerView.Adapter<ViewHolder> {
             final ImageUtility utility = ((MoviesHolder) holder).utility;
             final int width = ((MoviesHolder) holder).width;
             final int length = ((MoviesHolder) holder).length;
-            Picasso.with(mContext).load(R.drawable.no_image_available).resize(width, length).into(poster);
-            final int pos = position;
-            Target target = new Target() {
+            Picasso.with(mContext).load(url).centerCrop().resize(width, length).into(poster, new Callback() {
                 @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    poster.setImageBitmap(bitmap);
+                public void onSuccess() {
+
                 }
 
                 @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
+                public void onError() {
+                    Picasso.with(mContext).load(R.drawable.no_image_available).centerCrop().resize(width, length).into
+                            (poster);
                 }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                }
-            };
-            Picasso.with(mContext).load(url).centerCrop().resize(width, length).into(target);
+            });
             ((MoviesHolder) holder).itemContainer.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
